@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!-- 👋 -->
+<html lang="en">
+<head>
+<title>Materialized View Capital</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+<script type="text/javascript">
+/**
+ * Random-character text transition that preserves any nested HTML.
+ *
+ * Thanks, ChatGPT!
+ *
+ * @param {HTMLElement|string} rootEl   The element or selector you want to animate.
+ * @param {string}            finalHTML String of HTML for the final state.
+ * @param {object}            [opts]
+ * @param {string}            [opts.chars]     Pool of random characters.
+ * @param {number}            [opts.interval]  ms between animation frames.
+ * @param {number}            [opts.flicker]   Probability (0–1) to flicker each unrevealed char.
+ */
+function randomTextTransitionNested(rootEl, finalHTML, opts = {}) {
+  if (typeof rootEl === 'string') rootEl = document.querySelector(rootEl);
+  if (!rootEl) throw new Error('Container element not found');
+
+  const {
+    chars    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+    interval = 0,
+    flicker  = 0.1,
+  } = opts;
+
+  // 1) Build two identical trees
+  const finalWrapper   = document.createElement('div');
+  const workingWrapper = document.createElement('div');
+  finalWrapper.innerHTML   = finalHTML;
+  workingWrapper.innerHTML = finalHTML;
+
+  // 2) Collect all text nodes
+  function getTextNodes(node, out = []) {
+    for (let c of node.childNodes) {
+      if (c.nodeType === Node.TEXT_NODE) {
+        out.push(c);
+      } else if (c.nodeType === Node.ELEMENT_NODE) {
+        getTextNodes(c, out);
+      }
+    }
+    return out;
+  }
+
+  const finalTextNodes   = getTextNodes(finalWrapper);
+  const workingTextNodes = getTextNodes(workingWrapper);
+
+  // 3) Extract strings & init work arrays, but lock in *all* whitespace immediately
+  const finalStrings = finalTextNodes.map(n => n.textContent || '');
+  const workArrays   = finalStrings.map(str =>
+    Array.from(str, ch =>
+      /\s/.test(ch)   // any whitespace → keep as-is
+        ? ch
+        : chars[Math.random() * chars.length | 0]
+    )
+  );
+
+  // 4) Render the working tree in place
+  rootEl.innerHTML = '';
+  for (let node of workingWrapper.childNodes) {
+    rootEl.appendChild(node.cloneNode(true));
+  }
+
+  // 5) Build reveal list for *non*-whitespace positions only
+  const revealPositions = [];
+  finalStrings.forEach((str, ni) => {
+    for (let ci = 0; ci < str.length; ci++) {
+      if (!/\s/.test(str[ci])) {
+        revealPositions.push([ni, ci]);
+      }
+    }
+  });
+  // shuffle
+  revealPositions.sort(() => Math.random() - 0.5);
+
+  // 6) Animation loop
+  let step = 0;
+  const timer = setInterval(() => {
+    // lock in next real char
+    if (step < revealPositions.length) {
+      const [ni, ci] = revealPositions[step++];
+      workArrays[ni][ci] = finalStrings[ni][ci];
+    }
+    // flicker the rest
+    for (let k = step; k < revealPositions.length; k++) {
+      const [ni, ci] = revealPositions[k];
+      if (Math.random() < flicker) {
+        workArrays[ni][ci] = chars[Math.random() * chars.length | 0];
+      }
+    }
+    // flush back to the live DOM
+    const liveTextNodes = getTextNodes(rootEl);
+    liveTextNodes.forEach((n, i) => {
+      n.textContent = workArrays[i].join('');
+    });
+    // finish
+    if (step >= revealPositions.length) {
+      clearInterval(timer);
+      liveTextNodes.forEach((n, i) => {
+        n.textContent = finalStrings[i];
+      });
+    }
+  }, interval);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var converter = new showdown.Converter({openLinksInNewWindow: true}),
+    text = document.querySelector('div').innerText,
+    html = converter.makeHtml(text);
+    randomTextTransitionNested('div', html);
+});
+</script>
+<style>
+body {
+    padding: 1rem;
+    font-family: monospace;
+    white-space: pre-wrap;
+    display: block;
+    unicode-bidi: embed;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    margin: 0 0 .25em 0;
+}
+ul, p {
+    margin: 0 0 .25em 0;
+}
+ul {
+    line-height: .75em;
+}
+div {
+    width: 50%;
+    max-width: 35em;
+    margin: 0 auto;
+    /* keep your wrapping rules */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+code {
+    margin-left: -1em;
+    font-family: monospace;
+    display: inline-block;
+    transform: scaleX(2);
+    transform-origin: left center;
+}
+@media (max-width: 600px) {
+    div {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body>
+<div>
+
+```
+ ╱╲╱╲
+▕╲╱╲╱▏
+▕╱╲╱╲▏
+```
+
+# Materialized View Capital
+
+Investing: Infrastructure and developer tools startups
+Rounds: Pre-seed through series A
+Contact: [Chris Riccomini](https://www.linkedin.com/in/riccomini/)
+
+## Fund 1 (2024-2025)
+
+Microfund.
+
+- [ParadeDB](https://paradedb.com)
+- [Vakamo](https://vakamo.com)
+- [Greybeam](https://greybeam.ai)
+- [Bauplan](https://bauplanlabs.com)
+- [Wild Card](https://wild-card.ai)
+- [Subtrace](https://subtrace.dev)
+- [Oleander](https://oleander.dev)
+- [Tigris Data](https://tigrisdata.com)
+- [Donobu](https://donobu.com)
+- [Signadot](https://signadot.com)
+- [Cimba](https://cimba.ai)
+- [Reboot](https://reboot.dev)
+- [Tower](https://tower.dev)
+- [Artemis](https://artemisdata.io)
+- [xFabric](https://xfabric.ai)
+- [Tabs Data](https://tabsdata.com)
+- [Gauge](https://withgauge.com)
+- [Tensorlake](https://tensorlake.ai)
+- [Dosu](https://dosu.dev)
+- [Spiral](https://spiraldb.com)
+- [Zipline](https://zipline.ai)
+- [Bemi](https://bemi.io)
+
+## Fund 0 (2014-2024)
+
+Personal investments.
+
+- [Confluent](https://confluent.io) (IPO [CFLT](https://finance.yahoo.com/quote/CFLT))
+- [TopCoat Data](https://topcoatdata.com) (Acquired [Snyk](https://snyk.io))
+- [Anomalo](https://anomalo.com)
+- [Tabular](https://tabular.io) (Acquired by [Databricks](https://databricks.com))
+- [StarTree](https://startree.ai)
+- [Prefect](https://prefect.io)
+- [Meroxa](https://meroxa.com)
+- [Stemma](https://stemma.ai) (Acquired by [Teradata](https://teradata.com))
+- [Harmonize](https://harmonize.ai) (Acquired by [Drata](https://drata.com))
+- [Nile](https://thenile.dev)
+- [Transform](https://transform.co) (Acquired by [dbt Labs](https://dbtlabs.com))
+- [Modal](https://modal.com)
+- [Hypermode](https://hypermode.ai)
+- [Gable](https://gable.ai)
+- [Zenskar](https://zenskar.com)
+- [Cimba](https://cimba.ai)
+- [Trades.org](https://trades.org)
+- [Quill](https://quill.co)
+- [TigerBeetle](https://tigerbeetle.com)
+- [Responsive](https://responsive.dev)
+- [WarpStream](https://warpstream.com) (Acquired by [Confluent](https://confluent.io))
+- [Cedana](https://cedana.com)
+- [Eventual](https://eventualcomputing.com)
+- [Typedef](https://typedef.ai)
+- [Electric](https://electric.io)
+- [Nuon](https://nuon.co)
+- [Junction](https://junctionlabs.io)
+
+© Materialized View Capital, LLC. 2025
+</div>
+</body>
+</html>
