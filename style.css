@@ -1,0 +1,41 @@
+body {
+    padding: 2em;
+    font-family: monospace;
+    white-space: pre-wrap;
+    unicode-bidi: embed;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 1em 0 0 0;
+}
+ul, p {
+    margin: 0 0 0 0;
+}
+p {
+  line-height: 2em;
+}
+ul {
+    line-height: .75em;
+}
+div {
+    width: 50%;
+    max-width: 35em;
+    margin: 0 auto;
+    word-wrap: break-word;
+}
+pre {
+    font-family: monospace;
+    font-size: .5em;
+    display: inline-block;
+    transform: scaleX(2);
+    transform-origin: left center;
+    line-height: 1.75em;
+    margin-bottom: 0em;
+}
+@media (max-width: 600px) {
+    div {
+        width: 100%;
+    }
+}
+a, a:visited, a:hover, a:active {
+    color: #0000EE;
+}
